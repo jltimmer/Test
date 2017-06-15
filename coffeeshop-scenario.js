@@ -1,35 +1,35 @@
 
 
-var locations = 
-  ["AlexisHouse", "BrianHouse", "CoffeeShop", "CorrynHouse",
-    "Park"]
+var locations =
+["AlexisHouse", "BrianHouse", "CoffeeShop", "CorrynHouse",
+"Park"]
 
 var characters =
-  ["Alexis", "Brian", "Corryn"]
+["Alexis", "Brian", "Corryn"]
 
 // State
 var location_of =
-  { "Alexis": "AlexisHouse",
-    "Brian": "CoffeeShop",
-    "notebook": "AlexisHouse",
-    "pen":"AlexisHouse",
-    "Corryn": "CorrynHouse",
-    "book": "CorrynHouse",
-    "bike": "CorrynHouse",
-    "cash register": "CoffeeShop",
-    "coffee": "CoffeeShop",
-    "table": "CoffeeShop"
-  }
+{ "Alexis": "AlexisHouse",
+"Brian": "CoffeeShop",
+"notebook": "AlexisHouse",
+"pen":"AlexisHouse",
+"Corryn": "CorrynHouse",
+"book": "CorrynHouse",
+"bike": "CorrynHouse",
+"cash register": "CoffeeShop",
+"coffee": "CoffeeShop",
+"table": "CoffeeShop"
+}
 
 
 var conversation_log =
-  {
-    "AlexisHouse": [],
-    "BrianHouse": [],
-    "CorrynHouse": [],
-    "CoffeeShop": [],
-    "Park": [],
-  }
+{
+  "AlexisHouse": [],
+  "BrianHouse": [],
+  "CorrynHouse": [],
+  "CoffeeShop": [],
+  "Park": [],
+}
 
 var current_choices;
 
@@ -84,7 +84,7 @@ function selectChoice(index) {
   var display_text = applyOper(current_choices[index]);
 
   document.getElementById("response").innerHTML = display_text;
-  
+
   // current_choices = generate_choices();
   render();
 }
@@ -96,11 +96,14 @@ function cmdToAction(cmd) {
     case "take": {
       return take(args[0], args[1]);
     }
-    case "go": { 
+    case "go": {
       return go(args[0], args[1]);
     }
     case "talk": {
       return talk(args[0], args[1]);
+    }
+    case "give": {
+      return give(args[0], args[1], args[2]);
     }
     default: return undefined;
   }
@@ -112,8 +115,8 @@ function applyOper(cmd) {
   var displayText = "Action not defined!"; // to return at the end
 
   var action = cmdToAction(cmd);
-  
-  if(action != undefined && action.applies) { 
+
+  if(action != undefined && action.applies) {
     action.effects();
     displayText = action.text;
   }
@@ -137,6 +140,8 @@ function generate_choices () {
     var c = characters[ci];
     var loc = location_of[c];
     var things = whatsAt(loc);
+    var things_held = whatsAt(c);
+    // things at location of each character
     for(var ti in things) {
       var thing = things[ti];
       if(characters.indexOf(thing) < 0) {
@@ -149,7 +154,19 @@ function generate_choices () {
           choices.push({op:"talk", args:[c, thing]});
         }
       }
+
+
     } // end loop over things at location of c
+
+    // giving things
+    for(var thi in things_held) {
+      for(var ci2 in characters) {
+        var c2 = characters[ci2];
+        if (c != c2) {
+          choices.push({op:"give", args:[c, c2, thing]});
+        }
+      }
+    }
 
     // places to move
     for(var li in locations) {
@@ -160,9 +177,10 @@ function generate_choices () {
     }
 
 
+
   } //end loop over characters
   return choices;
-  
+
 }
 
 function begin() { render(); }
@@ -233,4 +251,19 @@ function talk(agent1, agent2) {
 // preconditions: X has A
 // effects: Y has A
 // turns: 1
+function give(agent1, agent2, thing) {
+  /*
+  var loc = location_of[agent1];
+  var applies = loc == location_of[agent2];
+  */
+  var loc = location_of[agent1];
+  var applies = loc == location_of[thing];
 
+  function effects() {
+    location_of[thing] = agent2
+  }
+
+  var text = agent1+" gives "+thing+" to "+agent2;
+
+  return {applies:applies, effects:effects, text:text};
+}
