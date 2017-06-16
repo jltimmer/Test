@@ -67,7 +67,8 @@ function displayChoices() {
   toRender = "";
   for (var i = 0; i < current_choices.length; i++) {
     var choice = current_choices[i];
-    toRender += ""+i+": "+choiceToString(choice)+"<br>";
+    toRender += "<a onclick=selectChoice("+i+") href=javascript:void(0);>"+
+    i+": "+choiceToString(choice)+"</a><br>";
   }
   document.getElementById("choices").innerHTML = toRender;
 }
@@ -230,7 +231,7 @@ function go(agent, place) {
 // turns: 1
 
 // talk
-// precondtions: X and Y in L
+// preconditions: X and Y in L
 // effects: none
 // turns: 1-3
 function talk(agent1, agent2) {
