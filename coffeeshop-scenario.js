@@ -112,9 +112,9 @@ function cmdToAction(cmd) {
     case "give": {
       return give(args[0], args[1], args[2]);
     }
-	case "wear": {
-	  return wear(args[0], args[1]);
-	}
+    case "wear": {
+      return wear(args[0], args[1]);
+    }
     default: return undefined;
   }
 }
@@ -168,22 +168,22 @@ function generate_choices () {
 
     } // end loop over things at location of c
 
-    
+
     for(var thi in things_held) {
       thing_held = things_held[thi];
-	  
-	  // giving it
+
+      // giving it
       for(var ci2 in characters) {
         var c2 = characters[ci2];
         if (c != c2 && loc == location_of[c2]) {
           choices.push({op:"give", args:[c, c2, thing_held]});
         }
       }
-	  
-	  // wearing it
-	  if (clothing_on[c] != thing_held) {
-		choices.push({op:"wear", args:[c, thing_held]});
-	  }
+
+      // wearing it
+      if (clothing_on[c] != thing_held) {
+        choices.push({op:"wear", args:[c, thing_held]});
+      }
     }
 
     // places to move
@@ -245,23 +245,23 @@ function go(agent, place) {
 // effects: wearing X A
 // turns: 1
 function wear(agent, thing) {
-	
-	var applies = agent == location_of[thing];
-	var text;
-	
-	function effects() {
-	  clothing_on[agent] = thing;
-	}
-	
-	if (clothing_on[agent] == "") {
-	  text = agent+" wears "+thing;
-    }
-    else {
-      text = agent+" takes off "+clothing_on[agent]+" and wears "+thing;
-    }
-	
-	return {applies:applies, effects:effects, text:text};
-	
+
+  var applies = agent == location_of[thing];
+  var text;
+
+  function effects() {
+    clothing_on[agent] = thing;
+  }
+
+  if (clothing_on[agent] == "") {
+    text = agent+" wears "+thing;
+  }
+  else {
+    text = agent+" takes off "+clothing_on[agent]+" and wears "+thing;
+  }
+
+  return {applies:applies, effects:effects, text:text};
+
 }
 
 // talk
@@ -292,10 +292,10 @@ function give(agent1, agent2, thing) {
 
   function effects() {
     location_of[thing] = agent2
-	
-	if (clothing_on[agent1] == thing) {
-		clothing_on[agent1] = "";
-	}
+
+    if (clothing_on[agent1] == thing) {
+      clothing_on[agent1] = "";
+    }
   }
 
   var text = agent1+" gives "+thing+" to "+agent2;
