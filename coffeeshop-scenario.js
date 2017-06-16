@@ -60,6 +60,7 @@ function choiceToString(c) {
     case "wear": {
       return "Wear "+args[1];
     }
+    default: return op+" "+args[args.length-1];
   }
 }
 
@@ -188,19 +189,22 @@ function generate_choices () {
 
     } // end loop over things at location of c
 
-
+    // giving it
     for(var thi in things_held) {
       thing_held = things_held[thi];
 
-      // giving it
       for(var ci2 in characters) {
         var c2 = characters[ci2];
         if (c != c2 && loc == location_of[c2]) {
           choices.push({op:"give", args:[c, c2, thing_held]});
         }
       }
+    }
 
-      // wearing it
+    // wearing it
+    for(var thi in things_held) {
+      thing_held = things_held[thi];
+
       if (clothing_on[c] != thing_held) {
         choices.push({op:"wear", args:[c, thing_held]});
       }
@@ -215,6 +219,7 @@ function generate_choices () {
     }
 
   } //end loop over characters
+
   return choices;
 
 }
@@ -321,4 +326,5 @@ function give(agent1, agent2, thing) {
   var text = agent1+" gives "+thing+" to "+agent2;
 
   return {applies:applies, effects:effects, text:text};
+
 }
