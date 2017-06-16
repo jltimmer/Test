@@ -161,10 +161,11 @@ function generate_choices () {
 
     // giving things
     for(var thi in things_held) {
+      thing_held = things_held[thi];
       for(var ci2 in characters) {
         var c2 = characters[ci2];
-        if (c != c2) {
-          choices.push({op:"give", args:[c, c2, thing]});
+        if (c != c2 && loc == location_of[c2]) {
+          choices.push({op:"give", args:[c, c2, thing_held]});
         }
       }
     }
@@ -176,8 +177,6 @@ function generate_choices () {
         choices.push({op:"go", args:[c, l]});
       }
     }
-
-
 
   } //end loop over characters
   return choices;
@@ -249,16 +248,12 @@ function talk(agent1, agent2) {
 }
 
 // give
-// preconditions: X has A
+// preconditions: X has A, X and Y in L
 // effects: Y has A
 // turns: 1
 function give(agent1, agent2, thing) {
-  /*
   var loc = location_of[agent1];
-  var applies = loc == location_of[agent2];
-  */
-  var loc = location_of[agent1];
-  var applies = loc == location_of[thing];
+  var applies = agent1 == location_of[thing] && loc == location_of[agent2];
 
   function effects() {
     location_of[thing] = agent2
