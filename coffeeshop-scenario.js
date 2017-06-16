@@ -42,9 +42,25 @@ var current_choices;
 
 function choiceToString(c) {
   var {op, args} = c;
-  var str = op+"(";
-  str = op+"("+ args.toString() + ")";
-  return str;
+  var str = "";
+
+  switch(op) {
+    case "take": {
+      return "Take "+args[1];
+    }
+    case "go": {
+      return "Go to "+args[1];
+    }
+    case "talk": {
+      return "Talk to "+args[1];
+    }
+    case "give": {
+      return "Give "+args[2]+" to "+args[1];
+    }
+    case "wear": {
+      return "Wear "+args[1];
+    }
+  }
 }
 
 function displayState() {
@@ -73,8 +89,13 @@ function displayChoices() {
   toRender = "";
   for (var i = 0; i < current_choices.length; i++) {
     var choice = current_choices[i];
-    toRender += "<a onclick=selectChoice("+i+") href=javascript:void(0);>"+
-    i+": "+choiceToString(choice)+"</a><br>";
+    var last_character;
+    if (choice.args[0] != last_character) {
+      toRender += "<br>"+"Actions for "+choice.args[0]+"<br>";
+    }
+    toRender += "<a onclick=selectChoice("+i+") href=javascript:void(0);>"+choiceToString(choice)+"</a><br>";
+
+    last_character = choice.args[0];
   }
   document.getElementById("choices").innerHTML = toRender;
 }
@@ -84,7 +105,6 @@ function render() {
   displayState();
   displayChoices();
 }
-
 
 function selectChoice(index) {
 
